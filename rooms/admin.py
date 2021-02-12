@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import mark_safe
 from . import models
 
 
@@ -14,10 +15,17 @@ class ItemAdmin(admin.ModelAdmin):
     pass
 
 
+class PhotoInline(admin.TabularInline):
+
+    model = models.Photo
+
+
 @admin.register(models.Room)
 class RoomAdmin(admin.ModelAdmin):
 
     """Room Admin Definition"""
+
+    inlines = (PhotoInline,)
 
     fieldsets = (
         (
@@ -27,6 +35,7 @@ class RoomAdmin(admin.ModelAdmin):
                     "name",
                     "description",
                     "contry",
+                    "city",
                     "address",
                     "price",
                 ),
@@ -101,6 +110,7 @@ class RoomAdmin(admin.ModelAdmin):
         "city",
         "contry",
     )
+    raw_id_fields = ("host",)
 
     search_fields = ("=city", "^host__username")
 
@@ -110,16 +120,29 @@ class RoomAdmin(admin.ModelAdmin):
         "house_rules",
     )
 
+    def save_model(self, request, obj, form, change):
+        print(obj, change, form)
+        super().save_model(request, obj, form, change)
+
     def count_amenities(self, obj):
-        print(obj.amenities.all())
-        return "Potato"
+        return obj.amenities.count()
 
     def count_photos(self, obj):
         return obj.photos.count()
 
+    count_photos.short_description = "Photo Count"
+
 
 @admin.register(models.Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    """ """
+    """Photo Admin Definition"""
 
-    pass
+    list_display = (
+        "__str__",
+        "get_thumbnail",
+    )
+
+    def get_thumbnail(self, obj):
+        return mark_safe(f'<img width="50px" src="{obj.file.url}" />')
+
+    get_thumbnail.short_description = "Thumbnail"
