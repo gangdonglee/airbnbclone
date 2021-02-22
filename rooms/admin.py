@@ -34,7 +34,7 @@ class RoomAdmin(admin.ModelAdmin):
                 "fields": (
                     "name",
                     "description",
-                    "contry",
+                    "country",
                     "city",
                     "address",
                     "price",
@@ -83,7 +83,7 @@ class RoomAdmin(admin.ModelAdmin):
 
     list_display = (
         "name",
-        "contry",
+        "country",
         "city",
         "price",
         "address",
@@ -108,7 +108,7 @@ class RoomAdmin(admin.ModelAdmin):
         "facilities",
         "house_rules",
         "city",
-        "contry",
+        "country",
     )
     raw_id_fields = ("host",)
 
